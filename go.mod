@@ -1,4 +1,4 @@
-module github.com/miekg/dns
+module github.com/coderobe/godns
 
 go 1.12
 
