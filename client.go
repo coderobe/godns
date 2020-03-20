@@ -196,13 +196,6 @@ func (co *Conn) ReadMsg() (*Msg, error) {
 		// to use an erroneous message
 		return m, err
 	}
-	if t := m.IsTsig(); t != nil {
-		if _, ok := co.TsigSecret[t.Hdr.Name]; !ok {
-			return m, ErrSecret
-		}
-		// Need to work on the original message p, as that was used to calculate the tsig.
-		err = TsigVerify(p, co.TsigSecret[t.Hdr.Name], co.tsigRequestMAC, false)
-	}
 	return m, err
 }
 
@@ -277,15 +270,7 @@ func (co *Conn) Read(p []byte) (n int, err error) {
 // signature is calculated.
 func (co *Conn) WriteMsg(m *Msg) (err error) {
 	var out []byte
-	if t := m.IsTsig(); t != nil {
-		mac := ""
-		if _, ok := co.TsigSecret[t.Hdr.Name]; !ok {
-			return ErrSecret
-		}
-		out, mac, err = TsigGenerate(m, co.TsigSecret[t.Hdr.Name], co.tsigRequestMAC, false)
-		// Set for the next read, although only used in zone transfers
-		co.tsigRequestMAC = mac
-	} else {
+	if !(m.IsTsig()) {
 		out, err = m.Pack()
 	}
 	if err != nil {
