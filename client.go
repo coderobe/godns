@@ -270,7 +270,7 @@ func (co *Conn) Read(p []byte) (n int, err error) {
 // signature is calculated.
 func (co *Conn) WriteMsg(m *Msg) (err error) {
 	var out []byte
-	if !(m.IsTsig()) {
+	if m.IsTsig() == nil {
 		out, err = m.Pack()
 	}
 	if err != nil {

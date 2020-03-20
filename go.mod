@@ -1,4 +1,4 @@
-module github.com/coderobe/godns
+module github.com/coderobe/godns/v2
 
 go 1.12
 
